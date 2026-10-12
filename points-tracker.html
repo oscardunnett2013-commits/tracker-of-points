@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Points Tracker</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #e0e0e0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #ffffff;
+    }
+    #addFriend {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    #addFriend input {
+      padding: 8px;
+      font-size: 16px;
+      background: #1e1e1e;
+      border: 1px solid #333;
+      color: #fff;
+      border-radius: 5px;
+    }
+    #addFriend button {
+      padding: 8px 12px;
+      font-size: 16px;
+      margin-left: 5px;
+      background: #3a3a3a;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #addFriend button:hover {
+      background: #505050;
+    }
+    .friend {
+      background: #1e1e1e;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #333;
+    }
+    .friend input {
+      width: 60px;
+      text-align: center;
+      font-size: 16px;
+      background: #2a2a2a;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 5px;
+    }
+    .friend button {
+      background: #b00020;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .friend button:hover {
+      background: #ff0033;
+    }
+  </style>
+</head>
+<body>
+
+<h1>TRACKER OF POINTS</h1>
+
+<div id="addFriend">
+  <input id="friendName" placeholder="Friend name">
+  <button onclick="addFriend()">Add Friend</button>
+</div>
+
+<div id="friendsList"></div>
+
+<script>
+  let friends = JSON.parse(localStorage.getItem("friends")) || {};
+
+  function save() {
+    localStorage.setItem("friends", JSON.stringify(friends));
+  }
+
+  function addFriend() {
+    const name = document.getElementById("friendName").value.trim();
+    if (!name) return;
+
+    if (!friends[name]) friends[name] = 0;
+    save();
+    render();
+    document.getElementById("friendName").value = "";
+  }
+
+  function updatePoints(name, value) {
+    friends[name] = Number(value);
+    save();
+  }
+
+  function removeFriend(name) {
+    delete friends[name];
+    save();
+    render();
+  }
+
+  function render() {
+    const list = document.getElementById("friendsList");
+    list.innerHTML = "";
+
+    for (const name in friends) {
+      const div = document.createElement("div");
+      div.className = "friend";
+
+      div.innerHTML = `
+        <strong>${name}</strong>
+        <input type="number" value="${friends[name]}" 
+               onchange="updatePoints('${name}', this.value)">
+        <button onclick="removeFriend('${name}')">Remove</button>
+      `;
+
+      list.appendChild(div);
+    }
+  }
+
+  render();
+</script>
+
+</body>
+</html>
